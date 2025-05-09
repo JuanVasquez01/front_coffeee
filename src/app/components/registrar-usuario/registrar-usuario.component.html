@@ -1,15 +1,24 @@
 <div>
   <h2>Registrar Usuario</h2>
-  <form (ngSubmit)="registrarUsuario()">
+  <form #registroForm="ngForm" (ngSubmit)="registrarUsuario($event, registroForm)">
     <label for="username">Username:</label>
-    <input id="username" [(ngModel)]="usuario.username" name="username" required />
+    <input id="username" [(ngModel)]="usuario.username" name="username" required #username="ngModel" />
+    <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+      Username es requerido
+    </div>
 
     <label for="password">Password:</label>
-    <input id="password" type="password" [(ngModel)]="usuario.password" name="password" required />
+    <input id="password" type="password" [(ngModel)]="usuario.password" name="password" required #password="ngModel" />
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-message">
+      Password es requerido
+    </div>
 
     <label for="correo">Correo:</label>
-    <input id="correo" [(ngModel)]="usuario.correo" name="correo" required />
+    <input id="correo" [(ngModel)]="usuario.correo" name="correo" required #correo="ngModel" />
+    <div *ngIf="correo.invalid && (correo.dirty || correo.touched)" class="error-message">
+      Correo es requerido
+    </div>
 
-    <button type="submit">Registrar</button>
+    <button type="submit" [disabled]="!registroForm.valid">Registrar</button>
   </form>
 </div>
