@@ -1,0 +1,63 @@
+<div class="client-order-container">
+  <h2>Solicitar Tostado Personalizado</h2>
+
+  <div *ngIf="orderSuccess" class="success-message">
+    <h3>¡Pedido Enviado con Éxito!</h3>
+    <p>Su solicitud de tostado ha sido recibida. Pronto nos pondremos en contacto con usted para confirmar los detalles.</p>
+    <p>Puede hacer seguimiento a su pedido en la sección "Mis Pedidos".</p>
+    <button (click)="orderSuccess = false" class="new-order-btn">Realizar Otro Pedido</button>
+  </div>
+
+  <form #orderForm="ngForm" (ngSubmit)="submitOrder($event, orderForm)" *ngIf="!orderSuccess">
+    <div class="form-group">
+      <label for="coffeeType">Tipo de Café:</label>
+      <select id="coffeeType" [(ngModel)]="order.coffeeType" name="coffeeType" required>
+        <option value="" disabled selected>Seleccione un tipo de café</option>
+        <option *ngFor="let type of coffeeTypes" [value]="type.value">{{ type.label }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="quantity">Cantidad (kg):</label>
+      <input type="number" id="quantity" [(ngModel)]="order.quantity" name="quantity" min="1" max="100" required>
+    </div>
+
+    <div class="form-group">
+      <label for="roastLevel">Nivel de Tostado:</label>
+      <select id="roastLevel" [(ngModel)]="order.roastLevel" name="roastLevel" required>
+        <option *ngFor="let level of roastLevels" [value]="level.value">{{ level.label }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="specialInstructions">Instrucciones Especiales:</label>
+      <textarea id="specialInstructions" [(ngModel)]="order.specialInstructions" name="specialInstructions" rows="4"></textarea>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="!orderForm.valid || orderSubmitted" class="submit-btn">
+        {{ orderSubmitted ? 'Enviando...' : 'Enviar Solicitud' }}
+      </button>
+      <button type="button" (click)="resetForm()" class="reset-btn" [disabled]="orderSubmitted">Limpiar Formulario</button>
+    </div>
+  </form>
+
+  <div class="order-info">
+    <h3>Información sobre el Proceso de Tostado</h3>
+    <p>Nuestro proceso de tostado personalizado le permite disfrutar del café exactamente como a usted le gusta. Tenga en cuenta que:</p>
+    <ul>
+      <li>El tiempo de procesamiento es de aproximadamente 2-3 días hábiles.</li>
+      <li>El pedido mínimo es de 1 kg.</li>
+      <li>Ofrecemos diferentes niveles de tostado para adaptarnos a sus preferencias.</li>
+      <li>Puede incluir instrucciones especiales para personalizar aún más su experiencia.</li>
+    </ul>
+  </div>
+
+  <div class="navigation">
+    <button routerLink="/dashboard" class="back-btn">Volver al Dashboard</button>
+  </div>
+</div>

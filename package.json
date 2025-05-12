@@ -17,8 +17,14 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@ngtools/webpack": "^19.2.11",
+    "critters": "^0.0.23",
+    "esbuild": "^0.20.1",
+    "piscina": "^5.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "uri-js": "^4.4.1",
+    "vite": "^5.1.4",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
@@ -32,6 +38,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "^5.4.4"
   }
 }

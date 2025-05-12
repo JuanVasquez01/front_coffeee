@@ -1,0 +1,84 @@
+<div class="dashboard-container">
+  <h2>Bienvenido a tu Dashboard</h2>
+
+  <div *ngIf="usuario" class="user-info">
+    <h3>Información del Usuario</h3>
+    <p><strong>Username:</strong> {{ usuario.username }}</p>
+    <p><strong>Correo:</strong> {{ usuario.correo }}</p>
+    <p><strong>Rol:</strong> {{ usuario.role }}</p>
+  </div>
+
+  <div class="modules-section">
+    <h3>Módulos del Sistema</h3>
+
+    <!-- Módulos para Tostadores -->
+    <div *ngIf="usuario && usuario.role === 'roaster'" class="modules-grid">
+      <div class="module-card">
+        <h4>Panel de Control</h4>
+        <p>Control y monitoreo en tiempo real del proceso de tostado</p>
+        <button routerLink="/control-panel" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Gestión de Pedidos</h4>
+        <p>Ver y gestionar las solicitudes de tostado de los clientes</p>
+        <button routerLink="/roaster-orders" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Datos Históricos</h4>
+        <p>Visualización y análisis de sesiones de tostado anteriores</p>
+        <button routerLink="/historical-data" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Gestión de Perfiles</h4>
+        <p>Crear y administrar perfiles de tostado personalizados</p>
+        <button routerLink="/profile-management" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Visualización de Datos</h4>
+        <p>Gráficos y visualizaciones avanzadas de datos de tostado</p>
+        <button routerLink="/data-visualization" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Control de Actuadores</h4>
+        <p>Control manual de los componentes de hardware del tostador</p>
+        <button routerLink="/actuator-control" class="module-btn">Acceder</button>
+      </div>
+    </div>
+
+    <!-- Módulos para Clientes -->
+    <div *ngIf="usuario && usuario.role === 'client'" class="modules-grid">
+      <div class="module-card">
+        <h4>Solicitar Tostado</h4>
+        <p>Solicite un nuevo tostado personalizado según sus preferencias</p>
+        <button routerLink="/client-order" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Mis Pedidos</h4>
+        <p>Seguimiento y estado de sus pedidos de tostado</p>
+        <button routerLink="/client-orders-tracking" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Datos Históricos</h4>
+        <p>Visualización de sus sesiones de tostado anteriores</p>
+        <button routerLink="/historical-data" class="module-btn">Acceder</button>
+      </div>
+
+      <div class="module-card">
+        <h4>Mi Perfil</h4>
+        <p>Gestione sus preferencias y datos personales</p>
+        <button routerLink="/client-profile" class="module-btn">Acceder</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button (click)="cerrarSesion()" class="logout-btn">Cerrar Sesión</button>
+  </div>
+</div>

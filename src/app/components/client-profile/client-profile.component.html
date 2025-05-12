@@ -1,0 +1,154 @@
+<div class="client-profile-container">
+  <h2>Mi Perfil</h2>
+
+  <!-- Información del perfil -->
+  <div class="profile-section">
+    <div class="section-header">
+      <h3>Información Personal</h3>
+      <button *ngIf="!editingProfile" (click)="toggleEditProfile()" class="edit-btn">Editar</button>
+    </div>
+
+    <!-- Vista de solo lectura -->
+    <div *ngIf="!editingProfile" class="profile-info">
+      <div class="info-row">
+        <span class="info-label">Nombre de Usuario:</span>
+        <span class="info-value">{{ profileData.username }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Correo Electrónico:</span>
+        <span class="info-value">{{ profileData.correo }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Contraseña:</span>
+        <span class="info-value">••••••••</span>
+      </div>
+    </div>
+
+    <!-- Formulario de edición -->
+    <form *ngIf="editingProfile" #profileForm="ngForm" (ngSubmit)="updateProfile($event, profileForm)" class="edit-form">
+      <div class="form-group">
+        <label for="username">Nombre de Usuario:</label>
+        <input type="text" id="username" [(ngModel)]="profileData.username" name="username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo Electrónico:</label>
+        <input type="email" id="correo" [(ngModel)]="profileData.correo" name="correo" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña Actual:</label>
+        <input type="password" id="password" [(ngModel)]="profileData.password" name="password">
+        <small>Requerida para confirmar cambios</small>
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">Nueva Contraseña:</label>
+        <input type="password" id="newPassword" [(ngModel)]="profileData.newPassword" name="newPassword">
+        <small>Dejar en blanco para mantener la contraseña actual</small>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Nueva Contraseña:</label>
+        <input type="password" id="confirmPassword" [(ngModel)]="profileData.confirmPassword" name="confirmPassword">
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="profileUpdateSuccess" class="success-message">
+        ¡Perfil actualizado con éxito!
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-btn">Guardar Cambios</button>
+        <button type="button" (click)="toggleEditProfile()" class="cancel-btn">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Preferencias del cliente -->
+  <div class="preferences-section">
+    <div class="section-header">
+      <h3>Preferencias de Café</h3>
+      <button *ngIf="!editingPreferences" (click)="toggleEditPreferences()" class="edit-btn">Editar</button>
+    </div>
+
+    <!-- Vista de solo lectura -->
+    <div *ngIf="!editingPreferences" class="preferences-info">
+      <div class="info-row">
+        <span class="info-label">Nivel de Tostado Favorito:</span>
+        <span class="info-value">{{ getRoastLevelLabel(preferences.favoriteRoastLevel) }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Tipo de Café Preferido:</span>
+        <span class="info-value">{{ getCoffeeTypeLabel(preferences.preferredCoffeeType) }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Notificaciones:</span>
+        <span class="info-value">{{ preferences.notificationsEnabled ? 'Activadas' : 'Desactivadas' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Dirección de Entrega:</span>
+        <span class="info-value">{{ preferences.deliveryAddress }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Teléfono de Contacto:</span>
+        <span class="info-value">{{ preferences.phoneNumber }}</span>
+      </div>
+    </div>
+
+    <!-- Formulario de edición -->
+    <form *ngIf="editingPreferences" #preferencesForm="ngForm" (ngSubmit)="updatePreferences($event, preferencesForm)" class="edit-form">
+      <div class="form-group">
+        <label for="favoriteRoastLevel">Nivel de Tostado Favorito:</label>
+        <select id="favoriteRoastLevel" [(ngModel)]="preferences.favoriteRoastLevel" name="favoriteRoastLevel" required>
+          <option *ngFor="let level of roastLevels" [value]="level.value">{{ level.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="preferredCoffeeType">Tipo de Café Preferido:</label>
+        <select id="preferredCoffeeType" [(ngModel)]="preferences.preferredCoffeeType" name="preferredCoffeeType" required>
+          <option *ngFor="let type of coffeeTypes" [value]="type.value">{{ type.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="preferences.notificationsEnabled" name="notificationsEnabled">
+          Recibir notificaciones sobre nuevos productos y ofertas
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="deliveryAddress">Dirección de Entrega:</label>
+        <textarea id="deliveryAddress" [(ngModel)]="preferences.deliveryAddress" name="deliveryAddress" rows="3" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">Teléfono de Contacto:</label>
+        <input type="tel" id="phoneNumber" [(ngModel)]="preferences.phoneNumber" name="phoneNumber" required>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="preferencesUpdateSuccess" class="success-message">
+        ¡Preferencias actualizadas con éxito!
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-btn">Guardar Preferencias</button>
+        <button type="button" (click)="toggleEditPreferences()" class="cancel-btn">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Navegación -->
+  <div class="navigation">
+    <button routerLink="/dashboard" class="back-btn">Volver al Dashboard</button>
+  </div>
+</div>

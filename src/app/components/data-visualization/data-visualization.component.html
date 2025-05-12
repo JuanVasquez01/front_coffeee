@@ -1,0 +1,127 @@
+<div class="data-visualization-container">
+  <h2>Visualización de Datos</h2>
+
+  <!-- Controles principales -->
+  <div class="main-controls">
+    <div class="control-buttons">
+      <button class="control-btn" (click)="togglePause()" *ngIf="isRealTime">
+        {{ isPaused ? 'Reanudar' : 'Pausar' }}
+      </button>
+      <button class="control-btn" (click)="resetZoom()">Restablecer Zoom</button>
+      <div class="export-dropdown">
+        <button class="control-btn">Exportar</button>
+        <div class="export-options">
+          <button (click)="exportChart('PNG')">PNG</button>
+          <button (click)="exportChart('JPG')">JPG</button>
+          <button (click)="exportChart('SVG')">SVG</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="series-legend">
+      <div class="legend-item" *ngFor="let series of dataSeries">
+        <label [style.color]="series.color">
+          <input type="checkbox"
+                 [checked]="!isSeriesSelected(series.id)"
+                 (change)="toggleSeries(series.id)">
+          {{ series.name }}
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área del gráfico (placeholder) -->
+  <div class="chart-container">
+    <div class="chart-placeholder">
+      <p>Aquí se mostraría el gráfico de datos.</p>
+      <p>En una implementación real, se utilizaría Chart.js para visualizar los datos.</p>
+      <p>Los datos mostrarían:</p>
+      <ul>
+        <li *ngFor="let series of dataSeries" [style.color]="series.color">
+          {{ series.name }}: {{ series.data.length }} puntos de datos
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Panel de configuración -->
+  <div class="settings-panel">
+    <h3>Configuración del Gráfico</h3>
+
+    <div class="settings-grid">
+      <div class="setting-group">
+        <label for="chart-type">Tipo de Gráfico:</label>
+        <select id="chart-type" [(ngModel)]="chartType" (change)="updateChartSettings()">
+          <option value="line">Línea</option>
+          <option value="area">Área</option>
+          <option value="scatter">Dispersión</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label for="time-range">Rango de Tiempo (min):</label>
+        <input type="number" id="time-range" [(ngModel)]="timeRange" min="5" max="120" step="5" (change)="updateChartSettings()">
+      </div>
+
+      <div class="setting-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="autoScale" (change)="updateChartSettings()">
+          Escala Automática
+        </label>
+      </div>
+    </div>
+
+    <div class="range-settings" *ngIf="!autoScale">
+      <div class="setting-group">
+        <label>Temperatura (°C):</label>
+        <div class="range-inputs">
+          <input type="number" [(ngModel)]="minTemp" min="0" max="250" (change)="updateChartSettings()">
+          <span>a</span>
+          <input type="number" [(ngModel)]="maxTemp" min="0" max="250" (change)="updateChartSettings()">
+        </div>
+      </div>
+
+      <div class="setting-group" *ngIf="showHumidity">
+        <label>Humedad (%):</label>
+        <div class="range-inputs">
+          <input type="number" [(ngModel)]="minHumidity" min="0" max="100" (change)="updateChartSettings()">
+          <span>a</span>
+          <input type="number" [(ngModel)]="maxHumidity" min="0" max="100" (change)="updateChartSettings()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información de datos -->
+  <div class="data-info" *ngIf="dataSeries.length > 0">
+    <h3>Información de Datos</h3>
+
+    <div class="info-grid">
+      <div class="info-item" *ngFor="let series of dataSeries">
+        <h4 [style.color]="series.color">{{ series.name }}</h4>
+        <div class="info-details">
+          <div class="info-row">
+            <span class="info-label">Puntos:</span>
+            <span class="info-value">{{ series.data.length }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Temp. Máx:</span>
+            <span class="info-value">{{ getMaxTemperature(series) | number:'1.1-1' }}°C</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Temp. Min:</span>
+            <span class="info-value">{{ getMinTemperature(series) | number:'1.1-1' }}°C</span>
+          </div>
+          <div class="info-row" *ngIf="series.data[0]?.humidity !== undefined">
+            <span class="info-label">Humedad Inicial:</span>
+            <span class="info-value">{{ series.data[0]?.humidity | number:'1.1-1' }}%</span>
+          </div>
+          <div class="info-row" *ngIf="series.data[series.data.length-1]?.humidity !== undefined">
+            <span class="info-label">Humedad Final:</span>
+            <span class="info-value">{{ series.data[series.data.length-1]?.humidity | number:'1.1-1' }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

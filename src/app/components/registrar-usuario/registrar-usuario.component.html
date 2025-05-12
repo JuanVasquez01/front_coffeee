@@ -19,6 +19,12 @@
       Correo es requerido
     </div>
 
+    <label for="role">Tipo de Usuario:</label>
+    <select id="role" [(ngModel)]="usuario.role" name="role" required>
+      <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+    </select>
+
     <button type="submit" [disabled]="!registroForm.valid">Registrar</button>
+    <button type="button" class="back-button" routerLink="/">Volver al Inicio</button>
   </form>
 </div>

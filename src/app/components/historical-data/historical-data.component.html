@@ -1,0 +1,99 @@
+<div class="historical-data-container">
+  <h2>Datos Históricos de Tostado</h2>
+
+  <!-- Sección de filtros -->
+  <div class="filters-section">
+    <h3>Filtros</h3>
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="date-filter">Fecha:</label>
+        <input type="date" id="date-filter" [(ngModel)]="dateFilter">
+      </div>
+
+      <div class="filter-group">
+        <label for="profile-filter">Perfil:</label>
+        <select id="profile-filter" [(ngModel)]="profileFilter">
+          <option value="">Todos los perfiles</option>
+          <option *ngFor="let profile of availableProfiles" [value]="profile">
+            {{ profile }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="apply-btn" (click)="applyFilters()">Aplicar Filtros</button>
+        <button class="reset-btn" (click)="resetFilters()">Restablecer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de exportación -->
+  <div class="export-section">
+    <h3>Exportar Datos</h3>
+    <div class="export-buttons">
+      <button class="export-btn csv" (click)="exportData('CSV')">Exportar CSV</button>
+      <button class="export-btn pdf" (click)="exportData('PDF')">Exportar PDF</button>
+    </div>
+  </div>
+
+  <!-- Tabla de sesiones -->
+  <div class="sessions-table-container">
+    <h3>Sesiones de Tostado</h3>
+
+    <div class="selected-actions" *ngIf="selectedSessions.length > 0">
+      <span>{{ selectedSessions.length }} sesiones seleccionadas</span>
+      <button class="compare-btn" (click)="compareSelectedSessions()" [disabled]="selectedSessions.length < 2">
+        Comparar Seleccionadas
+      </button>
+    </div>
+
+    <table class="sessions-table">
+      <thead>
+        <tr>
+          <th>Seleccionar</th>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Perfil</th>
+          <th>Duración</th>
+          <th>Temp. Máx.</th>
+          <th>Humedad Final</th>
+          <th>Notas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let session of sessions" [ngClass]="{'selected': isSessionSelected(session.id)}">
+          <td>
+            <input type="checkbox"
+                  [checked]="isSessionSelected(session.id)"
+                  (change)="toggleSessionSelection(session.id)">
+          </td>
+          <td>{{ session.id }}</td>
+          <td>{{ formatDate(session.date) }}</td>
+          <td>{{ session.profileName }}</td>
+          <td>{{ session.duration }}</td>
+          <td>{{ session.maxTemperature }}°C</td>
+          <td>{{ session.finalHumidity }}%</td>
+          <td>{{ session.notes }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="sessions.length === 0" class="no-data">
+      No hay sesiones de tostado disponibles.
+    </div>
+  </div>
+
+  <!-- Sección de comparación (placeholder) -->
+  <div class="comparison-section" *ngIf="selectedSessions.length >= 2">
+    <h3>Comparación de Sesiones</h3>
+    <div class="comparison-placeholder">
+      <p>Aquí se mostrarían las gráficas comparativas de las sesiones seleccionadas.</p>
+      <p>En una implementación real, se utilizaría Chart.js para visualizar los datos.</p>
+    </div>
+  </div>
+
+  <!-- Navegación -->
+  <div class="navigation">
+    <button routerLink="/dashboard" class="back-btn">Volver al Dashboard</button>
+  </div>
+</div>

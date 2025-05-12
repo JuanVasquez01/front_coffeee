@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { UsuarioService, Usuario } from '../../services/usuario.service';
 
 @Component({
@@ -8,10 +9,14 @@ import { UsuarioService, Usuario } from '../../services/usuario.service';
   templateUrl: './registrar-usuario.component.html',
   styleUrls: ['./registrar-usuario.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule, RouterLink]
 })
 export class RegistrarUsuarioComponent {
-  usuario: Usuario = { username: '', password: '', correo: '', role: 'user' };
+  usuario: Usuario = { username: '', password: '', correo: '', role: 'client' };
+  roles = [
+    { value: 'client', label: 'Cliente' },
+    { value: 'roaster', label: 'Tostador' }
+  ];
 
   constructor(private usuarioService: UsuarioService) {}
 

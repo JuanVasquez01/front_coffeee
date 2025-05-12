@@ -1,0 +1,191 @@
+<div class="roaster-orders-container">
+  <h2>Gestión de Pedidos de Clientes</h2>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="status-filter">Filtrar por Estado:</label>
+      <select id="status-filter" [(ngModel)]="statusFilter" (change)="applyFilters()">
+        <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Lista de pedidos -->
+  <div class="orders-list" *ngIf="!selectedOrder">
+    <h3>Pedidos de Clientes</h3>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="filteredOrders.length === 0" class="no-orders">
+      <p>No se encontraron pedidos con los filtros seleccionados.</p>
+    </div>
+
+    <div class="order-card" *ngFor="let order of filteredOrders" (click)="viewOrderDetails(order)">
+      <div class="order-header">
+        <div class="order-id">Pedido #{{ order.id }}</div>
+        <div class="order-date">{{ formatDate(order.createdAt) }}</div>
+      </div>
+
+      <div class="order-status">
+        <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+          {{ getStatusLabel(order.status) }}
+        </span>
+      </div>
+
+      <div class="order-details">
+        <div class="detail-item">
+          <span class="detail-label">Cliente:</span>
+          <span class="detail-value">{{ order.clientName }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Tipo de Café:</span>
+          <span class="detail-value">{{ order.coffeeType === 'arabica' ? 'Arábica' :
+                                        order.coffeeType === 'robusta' ? 'Robusta' :
+                                        order.coffeeType === 'blend' ? 'Mezcla Especial' :
+                                        order.coffeeType }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Cantidad:</span>
+          <span class="detail-value">{{ order.quantity }} kg</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Nivel de Tostado:</span>
+          <span class="detail-value">{{ order.roastLevel === 'light' ? 'Suave' :
+                                        order.roastLevel === 'medium' ? 'Medio' :
+                                        order.roastLevel === 'dark' ? 'Intenso' :
+                                        order.roastLevel === 'custom' ? 'Personalizado' :
+                                        order.roastLevel }}</span>
+        </div>
+      </div>
+
+      <div class="order-footer">
+        <div class="estimated-delivery" *ngIf="order.estimatedDelivery">
+          <span class="delivery-label">Entrega estimada:</span>
+          <span class="delivery-date">{{ order.estimatedDelivery.toLocaleDateString() }}</span>
+        </div>
+
+        <div class="order-actions">
+          <button class="view-details-btn">Ver Detalles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detalles del pedido seleccionado -->
+  <div class="order-details-view" *ngIf="selectedOrder">
+    <div class="details-header">
+      <h3>Detalles del Pedido #{{ selectedOrder.id }}</h3>
+      <button class="close-btn" (click)="closeOrderDetails()">Volver a la Lista</button>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="updateSuccess" class="success-message">
+      Estado del pedido actualizado correctamente.
+    </div>
+
+    <div class="details-content">
+      <div class="details-section">
+        <h4>Información General</h4>
+        <div class="detail-row">
+          <span class="detail-label">Cliente:</span>
+          <span>{{ selectedOrder.clientName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Estado:</span>
+          <span class="status-badge" [ngClass]="getStatusClass(selectedOrder.status)">
+            {{ getStatusLabel(selectedOrder.status) }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha de Solicitud:</span>
+          <span>{{ formatDate(selectedOrder.createdAt) }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedOrder.estimatedDelivery">
+          <span class="detail-label">Entrega Estimada:</span>
+          <span>{{ selectedOrder.estimatedDelivery.toLocaleDateString() }}</span>
+        </div>
+      </div>
+
+      <div class="details-section">
+        <h4>Detalles del Café</h4>
+        <div class="detail-row">
+          <span class="detail-label">Tipo de Café:</span>
+          <span>{{ selectedOrder.coffeeType === 'arabica' ? 'Arábica' :
+                   selectedOrder.coffeeType === 'robusta' ? 'Robusta' :
+                   selectedOrder.coffeeType === 'blend' ? 'Mezcla Especial' :
+                   selectedOrder.coffeeType }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Cantidad:</span>
+          <span>{{ selectedOrder.quantity }} kg</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Nivel de Tostado:</span>
+          <span>{{ selectedOrder.roastLevel === 'light' ? 'Suave' :
+                   selectedOrder.roastLevel === 'medium' ? 'Medio' :
+                   selectedOrder.roastLevel === 'dark' ? 'Intenso' :
+                   selectedOrder.roastLevel === 'custom' ? 'Personalizado' :
+                   selectedOrder.roastLevel }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedOrder.specialInstructions">
+          <span class="detail-label">Instrucciones Especiales:</span>
+          <span>{{ selectedOrder.specialInstructions }}</span>
+        </div>
+      </div>
+
+      <!-- Sección para actualizar estado -->
+      <div class="details-section update-status-section" *ngIf="!['delivered', 'cancelled'].includes(selectedOrder.status)">
+        <h4>Actualizar Estado</h4>
+        <div class="status-update-form">
+          <div class="form-group">
+            <label for="new-status">Nuevo Estado:</label>
+            <select id="new-status" [(ngModel)]="newStatus">
+              <option value="">-- Seleccione nuevo estado --</option>
+              <option *ngFor="let option of getAvailableStatusTransitions(selectedOrder.status)"
+                      [value]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status-notes">Notas (opcional):</label>
+            <textarea id="status-notes" [(ngModel)]="statusNotes" rows="3"
+                      placeholder="Añada notas adicionales sobre este cambio de estado"></textarea>
+          </div>
+
+          <button class="update-btn" (click)="updateOrderStatus()" [disabled]="!newStatus">
+            Actualizar Estado
+          </button>
+        </div>
+      </div>
+
+      <div class="details-section" *ngIf="selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0">
+        <h4>Historial de Estados</h4>
+        <div class="status-timeline">
+          <div class="timeline-item" *ngFor="let update of selectedOrder.statusHistory">
+            <div class="timeline-status">
+              <span class="status-badge" [ngClass]="getStatusClass(update.status)">
+                {{ getStatusLabel(update.status) }}
+              </span>
+            </div>
+            <div class="timeline-time">{{ formatDate(update.timestamp) }}</div>
+            <div class="timeline-notes" *ngIf="update.notes">{{ update.notes }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navegación -->
+  <div class="navigation">
+    <button routerLink="/dashboard" class="back-btn">Volver al Dashboard</button>
+  </div>
+</div>

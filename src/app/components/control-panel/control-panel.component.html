@@ -1,0 +1,125 @@
+<div class="control-panel-container">
+  <h2>Panel de Control de Tostado</h2>
+
+  <!-- Sección de conexión ESP32 -->
+  <div class="esp32-connection">
+    <h3>Conexión ESP32</h3>
+    <div class="connection-form">
+      <div class="form-group">
+        <label for="esp32-ip">Dirección IP:</label>
+        <input type="text" id="esp32-ip" [(ngModel)]="esp32IpAddress" placeholder="192.168.1.100" [disabled]="isConnected">
+      </div>
+      <div class="form-group">
+        <label for="esp32-port">Puerto:</label>
+        <input type="text" id="esp32-port" [(ngModel)]="esp32Port" placeholder="81" [disabled]="isConnected">
+      </div>
+      <div class="connection-buttons">
+        <button class="connect-btn" (click)="conectarESP32()" [disabled]="isConnected">Conectar</button>
+        <button class="disconnect-btn" (click)="desconectarESP32()" [disabled]="!isConnected">Desconectar</button>
+      </div>
+    </div>
+    <div class="connection-status">
+      <div class="status-indicator" [ngClass]="{'connected': isConnected, 'disconnected': !isConnected}">
+        {{ isConnected ? 'Conectado' : 'Desconectado' }}
+      </div>
+      <div class="simulation-indicator" *ngIf="useSimulation">
+        Usando datos simulados
+      </div>
+      <div class="error-message" *ngIf="connectionError">
+        {{ connectionError }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de datos en tiempo real -->
+  <div class="real-time-data">
+    <h3>Datos en Tiempo Real</h3>
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="data-label">Temperatura</div>
+        <div class="data-value" [ngClass]="{'high-temp': temperaturaActual > 180, 'medium-temp': temperaturaActual > 100 && temperaturaActual <= 180}">
+          {{ temperaturaActual | number:'1.1-1' }}°C
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="data-label">Humedad</div>
+        <div class="data-value">
+          {{ humedadActual | number:'1.1-1' }}%
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="data-label">Tiempo</div>
+        <div class="data-value">
+          {{ tiempoTranscurrido }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de control de actuadores -->
+  <div class="actuator-control">
+    <h3>Control de Actuadores</h3>
+    <div class="actuator-grid">
+      <div class="actuator-card">
+        <div class="actuator-label">Tostador</div>
+        <button
+          [ngClass]="{'active': actuadorTostador}"
+          (click)="toggleActuador('tostador')">
+          {{ actuadorTostador ? 'Encendido' : 'Apagado' }}
+        </button>
+      </div>
+      <div class="actuator-card">
+        <div class="actuator-label">Enfriador</div>
+        <button
+          [ngClass]="{'active': actuadorEnfriador}"
+          (click)="toggleActuador('enfriador')">
+          {{ actuadorEnfriador ? 'Encendido' : 'Apagado' }}
+        </button>
+      </div>
+      <div class="actuator-card">
+        <div class="actuator-label">Agitador</div>
+        <button
+          [ngClass]="{'active': actuadorAgitador}"
+          (click)="toggleActuador('agitador')">
+          {{ actuadorAgitador ? 'Encendido' : 'Apagado' }}
+        </button>
+      </div>
+      <div class="actuator-card">
+        <div class="actuator-label">Convección</div>
+        <button
+          [ngClass]="{'active': actuadorConveccion}"
+          (click)="toggleActuador('conveccion')">
+          {{ actuadorConveccion ? 'Encendido' : 'Apagado' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de selección de perfil -->
+  <div class="profile-selection">
+    <h3>Selección de Perfil</h3>
+    <div class="profile-container">
+      <label for="profile-select">Seleccione un perfil:</label>
+      <select id="profile-select" [(ngModel)]="perfilSeleccionado">
+        <option value="">-- Seleccione un perfil --</option>
+        <option *ngFor="let perfil of perfilesDisponibles" [value]="perfil">
+          {{ perfil }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Sección de control de ciclo -->
+  <div class="cycle-control">
+    <h3>Control de Ciclo</h3>
+    <div class="button-container">
+      <button class="start-btn" (click)="iniciarCiclo()" [disabled]="actuadorTostador">Iniciar Ciclo</button>
+      <button class="stop-btn" (click)="detenerCiclo()" [disabled]="!actuadorTostador">Detener Ciclo</button>
+    </div>
+  </div>
+
+  <!-- Navegación -->
+  <div class="navigation">
+    <button routerLink="/dashboard" class="back-btn">Volver al Dashboard</button>
+  </div>
+</div>

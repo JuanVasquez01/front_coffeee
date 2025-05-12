@@ -1,0 +1,135 @@
+<div class="profile-management-container">
+  <h2>Gestión de Perfiles de Tostado</h2>
+
+  <!-- Lista de perfiles existentes (visible cuando no estamos en modo edición) -->
+  <div class="profiles-list-section" *ngIf="!editMode">
+    <div class="section-header">
+      <h3>Perfiles Disponibles</h3>
+      <button class="create-btn" (click)="createNewProfile()">Crear Nuevo Perfil</button>
+    </div>
+
+    <div class="profiles-grid">
+      <div class="profile-card" *ngFor="let profile of profiles">
+        <div class="profile-header">
+          <h4>{{ profile.name }}</h4>
+          <span class="template-badge" *ngIf="profile.isTemplate">Plantilla</span>
+        </div>
+
+        <div class="profile-description">
+          {{ profile.description }}
+        </div>
+
+        <div class="profile-details">
+          <div class="detail-item">
+            <span class="detail-label">Puntos:</span>
+            <span class="detail-value">{{ profile.points.length }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Temp. Máx:</span>
+            <span class="detail-value">{{ getMaxTemperature(profile) }}°C</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Duración:</span>
+            <span class="detail-value">{{ getDuration(profile) }} min</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Creado:</span>
+            <span class="detail-value">{{ formatDate(profile.createdAt) }}</span>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button class="edit-btn" (click)="editProfile(profile)">Editar</button>
+          <button class="duplicate-btn" (click)="duplicateProfile(profile)">Duplicar</button>
+          <button class="delete-btn" (click)="deleteProfile(profile.id)" [disabled]="profile.isTemplate">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de edición de perfil (visible en modo edición) -->
+  <div class="profile-edit-section" *ngIf="editMode">
+    <div class="section-header">
+      <h3>{{ currentProfile.id === 0 ? 'Crear Nuevo Perfil' : 'Editar Perfil' }}</h3>
+    </div>
+
+    <div class="profile-form">
+      <div class="form-group">
+        <label for="profile-name">Nombre del Perfil:</label>
+        <input type="text" id="profile-name" [(ngModel)]="currentProfile.name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="profile-description">Descripción:</label>
+        <textarea id="profile-description" [(ngModel)]="currentProfile.description" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="profile-template">¿Es una plantilla?</label>
+        <input type="checkbox" id="profile-template" [(ngModel)]="currentProfile.isTemplate">
+      </div>
+
+      <div class="points-section">
+        <h4>Puntos del Perfil</h4>
+
+        <div class="points-table-container">
+          <table class="points-table">
+            <thead>
+              <tr>
+                <th>Tiempo (min)</th>
+                <th>Temperatura (°C)</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let point of currentProfile.points; let i = index">
+                <td>{{ point.time }}</td>
+                <td>{{ point.temperature }}</td>
+                <td>
+                  <button class="remove-point-btn" (click)="removePointFromProfile(i)">Eliminar</button>
+                </td>
+              </tr>
+              <tr *ngIf="currentProfile.points.length === 0">
+                <td colspan="3" class="no-points">No hay puntos definidos para este perfil.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="add-point-form">
+          <h5>Agregar Nuevo Punto</h5>
+          <div class="point-inputs">
+            <div class="form-group">
+              <label for="point-time">Tiempo (min):</label>
+              <input type="number" id="point-time" [(ngModel)]="newPoint.time" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label for="point-temp">Temperatura (°C):</label>
+              <input type="number" id="point-temp" [(ngModel)]="newPoint.temperature" min="0" max="250" step="1">
+            </div>
+            <button class="add-point-btn" (click)="addPointToProfile()">Agregar Punto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visualización de la curva (placeholder) -->
+      <div class="curve-visualization" *ngIf="currentProfile.points.length >= 2">
+        <h4>Previsualización de Curva</h4>
+        <div class="curve-placeholder">
+          <p>Aquí se mostraría la gráfica de la curva de tostado.</p>
+          <p>En una implementación real, se utilizaría Chart.js para visualizar la curva.</p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="save-btn" (click)="saveProfile()">Guardar Perfil</button>
+        <button class="cancel-btn" (click)="cancelEdit()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navegación -->
+  <div class="navigation">
+    <button routerLink="/dashboard" class="back-btn">Volver al Dashboard</button>
+  </div>
+</div>

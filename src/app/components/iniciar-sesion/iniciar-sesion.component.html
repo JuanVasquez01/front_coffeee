@@ -1,0 +1,23 @@
+<div>
+  <h2>Iniciar Sesión</h2>
+  <form #loginForm="ngForm" (ngSubmit)="iniciarSesion($event, loginForm)">
+    <label for="username">Username:</label>
+    <input id="username" [(ngModel)]="credenciales.username" name="username" required #username="ngModel" />
+    <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+      Username es requerido
+    </div>
+
+    <label for="password">Password:</label>
+    <input id="password" type="password" [(ngModel)]="credenciales.password" name="password" required #password="ngModel" />
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-message">
+      Password es requerido
+    </div>
+
+    <div *ngIf="errorMensaje" class="error-message">
+      {{ errorMensaje }}
+    </div>
+
+    <button type="submit" [disabled]="!loginForm.valid">Iniciar Sesión</button>
+    <button type="button" class="back-button" routerLink="/">Volver al Inicio</button>
+  </form>
+</div>

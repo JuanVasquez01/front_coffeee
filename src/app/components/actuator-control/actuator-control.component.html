@@ -1,0 +1,64 @@
+<div class="actuator-control-container" [class.compact-mode]="compactMode">
+  <div class="actuators-grid">
+    <div class="actuator-card" *ngFor="let actuator of actuators" [class.disabled]="disableAll">
+      <div class="actuator-header">
+        <h3>{{ actuator.name }}</h3>
+        <div class="status-indicator" [class]="getActuatorStatusClass(actuator.status)">
+          {{ getActuatorStatusText(actuator.status) }}
+        </div>
+      </div>
+
+      <div class="actuator-icon" [class]="getActuatorStatusClass(actuator.status)">
+        <i class="icon-{{ actuator.icon }}"></i>
+      </div>
+
+      <div class="actuator-description" *ngIf="showDescriptions">
+        {{ actuator.description }}
+      </div>
+
+      <!-- Controles normales (visibles cuando no se está confirmando) -->
+      <div class="actuator-controls" *ngIf="!isConfirming(actuator.id)">
+        <button
+          class="toggle-btn"
+          [class]="getActuatorStatusClass(actuator.status)"
+          (click)="toggleActuator(actuator.id)"
+          [disabled]="disableAll">
+          {{ actuator.status ? 'Apagar' : 'Encender' }}
+        </button>
+      </div>
+
+      <!-- Confirmación (visible solo cuando se está confirmando) -->
+      <div class="confirmation-controls" *ngIf="isConfirming(actuator.id)">
+        <div class="warning-message">
+          {{ actuator.safetyWarning }}
+        </div>
+        <div class="confirmation-buttons">
+          <button class="confirm-btn" (click)="confirmToggle(true)">Confirmar</button>
+          <button class="cancel-btn" (click)="confirmToggle(false)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leyenda de estados -->
+  <div class="status-legend">
+    <div class="legend-item">
+      <div class="legend-indicator active"></div>
+      <span>Encendido</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-indicator inactive"></div>
+      <span>Apagado</span>
+    </div>
+  </div>
+
+  <!-- Advertencias de seguridad -->
+  <div class="safety-warnings" *ngIf="!compactMode">
+    <h4>Advertencias de Seguridad</h4>
+    <ul>
+      <li>No deje los actuadores encendidos sin supervisión.</li>
+      <li>El tostador y el enfriador no deben estar activos simultáneamente.</li>
+      <li>Asegúrese de activar el enfriador después de un ciclo de tostado.</li>
+    </ul>
+  </div>
+</div>
